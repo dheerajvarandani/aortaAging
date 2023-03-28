@@ -1,8 +1,28 @@
+<html>
+
+<head></head>
+
+<body>
+    
+
+
 <canvas id="threejscanvas"></canvas>
+
+<input type="range" min=0 max=160 value=0 id="aortaSlider" style="position:absolute; top: 5vh">
+
+<script type="importmap">
+
+    {
+        "imports": {
+            "three": "./three/build/three.module.js"
+        }
+    }
+</script>
 <script type="module">
 
-    import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
-    import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/GLTFLoader.js";
+    import * as THREE from 'three';
+    import { GLTFLoader } from "./three/GLTFLoader.js";
+    import { OrbitControls } from './three/OrbitControls.js';
   
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -12,34 +32,72 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     //document.body.appendChild( renderer.domElement );
 
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    const cube = new THREE.Mesh( geometry, material );
+    const controls = new OrbitControls( camera, renderer.domElement );
 
-    scene.add( cube );
+    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.add( light );
+
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    scene.add( directionalLight );
+
+    const light2 = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1);
+    scene.add( light2 );     
+
+    let aorta;
+    let aortaAnim;
+    let mixer;
+
+
     camera.position.z = 5;
+
+    var clock = new THREE.Clock()
+    var delta = clock.getDelta();
+
 
 const loader = new GLTFLoader();
 loader.load(
 	// resource URL
-	'./endolymph.glb',
+	'./models/aorta.glb',
 	// called when the resource is loaded
 	function ( gltf ) {
 
-		scene.add( gltf.scene );
 
+        aorta = gltf.scene;
+        aortaAnim = gltf.animations;
+		scene.add( aorta);
+
+        mixer = new THREE.AnimationMixer(aorta);
+
+
+        mixer.clipAction(aortaAnim[0]).time = 0;
+        mixer.clipAction(aortaAnim[0]).play();
+        console.log(mixer.clipAction(aortaAnim[0]))
 
 	});
 
+
+
+    
+
     function animate() {
         requestAnimationFrame( animate );
+        if(mixer){
+            mixer.update(delta);
+        }
         renderer.render( scene, camera );
+
     }
     animate();
 
-    setInterval(function(){
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-    }, 5);
+    var slider = document.getElementById("aortaSlider").addEventListener("input",function(){
+
+        mixer.clipAction(aortaAnim[0]).stop();
+        mixer.clipAction(aortaAnim[0]).time = this.value/10;
+        mixer.clipAction(aortaAnim[0]).play();
+
+    })
 
 </script>
+
+</body>
+</html>
