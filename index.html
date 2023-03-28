@@ -5,18 +5,24 @@
 <body>
     
 <style>
-	
-body{
-	overflow-y:hidden;
-	background: black;
-	}
-	
-	</style>
+
+    body{
+
+        overflow-y: hidden;
+        background: black;
+    }
+
+    #threejscanvas {
+
+        width: 90vw;
+        height: 90vh;
+    }
+</style>
 
 
-<canvas id="threejscanvas"></canvas>
+<canvas id="threejscanvas" ></canvas>
 
-<input type="range" min=0 max=160 value=0 id="aortaSlider" style="position:absolute; top: 5vh">
+<input type="range" min=0 max=160 value=0 id="aortaSlider" style="position:absolute; top: 5vh; left: 10vw;">
 
 <script type="importmap">
 
@@ -37,7 +43,7 @@ body{
     const container = document.getElementById("threejscanvas")
 
     const renderer = new THREE.WebGLRenderer({canvas: container});
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( container.clientWidth, container.clientHeight );
     //document.body.appendChild( renderer.domElement );
 
     const controls = new OrbitControls( camera, renderer.domElement );
