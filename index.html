@@ -16,9 +16,10 @@
 </style>
 
 
-<!--canvas id="threejscanvas" ></canvas-->
+<canvas id="threejscanvas" ></canvas>
 
-<!--input type="range" min=0 max=160 value=0 id="aortaSlider" style="position:absolute; top: 5vh; left: 10vw;"-->
+<input type="range" min=0 max=160 value=0 id="aortaSlider" style="position:absolute; top: 5vh; left: 10vw;">
+<div id="loadingDiv">LOADING...</div>
 
 <script type="importmap">
 
@@ -28,7 +29,7 @@
         }
     }
 </script>
-<!--script type="module">
+<script type="module">
 
     import * as THREE from 'three';
     import { GLTFLoader } from "./three/GLTFLoader.js";
@@ -63,8 +64,13 @@
     var clock = new THREE.Clock()
     var delta = clock.getDelta();
 
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.onLoad = function(){
 
-const loader = new GLTFLoader();
+    loadingDiv.innerHTML = "Loaded!";
+
+    }
+const loader = new GLTFLoader(loadingManager);
 loader.load(
 	// resource URL
 	'./models/aorta.glb',
@@ -107,7 +113,7 @@ loader.load(
 
     })
 
-</script-->
+</script>
 <p>
 This page has been moved
 	<a href="https://www.dheerajv.com/aorta"> here </a>
